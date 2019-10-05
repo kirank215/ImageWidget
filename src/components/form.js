@@ -17,7 +17,6 @@ class Myform extends Component {
     };
 
     onChangeUpload = (event,input) => {
-        //	if(isURL === false) {
         if(input.name === 'upload')
         {
             event.preventDefault();
@@ -25,48 +24,64 @@ class Myform extends Component {
             console.log(input);
             if(image) {
                 console.log(image);
-                input.onChange(image);
+                const preview = document.getElementById("preview");
+			    const image_asURL = window.URL.createObjectURL(image);
+			    preview.onload = function() {
+			    	URL.revokeObjectURL(image);
+			    	input.onChange(image);
+			    }
+			    preview.src = image_asURL;
+			    preview.height = 75;
             }
             else
                 input.onChange(null);
         }
-
-        //	}
     };
 
     validateURL = url => {
         if(url) {
             console.log(url);
-            if(url.match(/([a-z-_0-9/:.]*\.(jpg|jpeg|png|gif))/i) == null)
+            if(url.match(/([a-z-_0-9/:.]*\.(jpg|jpeg|png))/i) == null)
                 return 'URL should contain an image';
-            else
-                return 'Correct';
+            else {
+            	const preview = document.getElementById("preview");
+            	//preview.onload = function() {
+            	//	preview.src = img.src;
+            	//}
+            	preview.src = url;
+            	preview.height = 75;
+            	/*
+            	const img = document.createElement("img");
+			    img.src = window.URL.createObjectURL(url);
+			    img.height = 60;
+			    img.onload = function() {
+			    	window.URL.revokeObjectURL(this.src);
+      			}
+      			*/
+      			return 'Correct!'
+
+            }
         }
     }
 
-    onBlurURL = (event, input) => {
-        console.log('The url is' + event.target.value);
-        input.onBlur(event);
-
-    };
 
     uploadrenderField = ({label, type, input, meta: { invalid, error } }) => (
             <div>
-            <label> {label} </label>
-            <input name = {input.name} type={type} accept = '.jpeg, .png'
-            onChange={event => this.onChangeUpload(event,input)}/>
-            {invalid && error && 
-            <span className="error">{error}</span>}
+            	<label> {label} </label>
+            	<input name = {input.name} type={type} accept = '.jpeg, .png'
+            			onChange={event => this.onChangeUpload(event,input)}/>
+            	{invalid && error &&
+            			<span className="error">{error}</span>}
             </div>
             );
 
-    urlrenderField = ({label, type, input, meta: { invalid, error } }) => (
+    urlrenderField = ({label, type, input: { name, onBlur }, meta: { invalid, error } }) => (
             <div>
-            <label> {label} </label>
-            <input name = {input.name} type={type}
-            onBlur={event => this.onBlurURL(event,input)} />
-            {invalid && error && 
-            <span className="error">{error}</span>}
+            	<label> {label} </label>
+          		<input name = {name} type={type}
+            			onBlur={event => onBlur(event)} />
+            	{invalid && error &&
+            			<span className="error">{error}</span>}
             </div>
             );
 
@@ -74,12 +89,13 @@ class Myform extends Component {
         const {handleSubmit} = this.props;
         return (
                 <div className="form">
-                <h3> Here is a Form </h3>
-                <form onSubmit={handleSubmit(this.submit)}>
-                <Field name="url" label="Enter the url for the Image " validate = {this.validateURL} component={this.urlrenderField} type="text"/>
-                <Field name="upload" label="Upload the Image " type="file" validate = {this.validateSize} component={this.uploadrenderField} />
-                <button type="submit"> Submit </button>
-                </form>
+                	<h3> Here is a Form </h3>
+                	<form onSubmit={handleSubmit(this.submit)}>
+                		<Field name="url" label="Enter the url for the Image " validate = {this.validateURL} component={this.urlrenderField} type="text"/>
+                		<Field name="upload" label="Upload the Image " type="file" validate = {this.validateSize} component={this.uploadrenderField} />
+                		<button type="submit"> Submit </button>
+                		<img id="preview" />
+                	</form>
                 </div>
                );
     };
