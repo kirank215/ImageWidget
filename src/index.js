@@ -10,15 +10,17 @@ import { Provider } from 'react-redux'
 import allReducers from './reducers'
 import action from './actions/action.js'
 
-const store = createStore(allReducers);
+const store = createStore(allReducers,
+	 window.__REDUX_DEVTOOLS_EXTENSION__ && window.__REDUX_DEVTOOLS_EXTENSION__()
+	 );
 
-console.log(store.getState())
+//console.log(store.getState())
 
 
 
-store.dispatch(action);
+//store.dispatch(action);
 
-console.log(store.getState())
+//console.log(store.getState())
 
 
 ReactDOM.render(
