@@ -1,0 +1,5 @@
+-create new function for component of url
+-check if url is image
+-validate image extensions
+-add preview
+-convert to base64 when submitting
