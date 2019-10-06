@@ -64,7 +64,7 @@ class Myform extends Component {
           //  preview.onload = () => {
          //   	}
             preview.src = url;
-            preview.height = 75;
+            preview.height = 150;
 
     	}
     }
@@ -100,13 +100,13 @@ class Myform extends Component {
                 		{!hasURL && (<Field  name="upload" label="Upload the Image " type="file"
                 				 component={this.uploadrenderField} />)}
                 		<button type="submit" className="textarea"> Submit </button>
-                		<button type="button" name="valueclear" onClick={reset} disabled={submitting}> 
+                		<button type="button" className="button" name="valueclear" onClick={reset} disabled={submitting}> 
                 					Clear Values </button>
 
                 		<div className="ImagePreview">
                 		<p className="textarea" style={{textalign: "center"}}> Image preview!</p>
-						<img id="preview" alt="No preview available" className="ImagePreview"/>
-						<button type="button" name="previewclear" onClick={resetPreview} disabled={submitting}> 
+						<img id="preview" alt="No preview available"/>
+						<button type="button" name="previewclear" onClick={resetPreview} disabled={submitting} style={{verticalAlign:"middle"}}> 
                 					Clear Preview </button>
 						</div>
                 	</form>
