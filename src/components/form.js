@@ -1,6 +1,7 @@
 import React from 'react';
 import {Component} from 'react';
 import { Field, reduxForm } from 'redux-form';
+import '../css/App.css'
 
 
 class Myform extends Component {
@@ -17,25 +18,22 @@ class Myform extends Component {
     };
 
     onChangeUpload = (event,input) => {
-        if(input.name === 'upload')
-        {
-            event.preventDefault();
-            const image = event.target.files[0];
-            console.log(input);
-            if(image) {
-                console.log(image);
-                const preview = document.getElementById("preview");
-			    const image_asURL = window.URL.createObjectURL(image);
-			    preview.onload = function() {
-			    	URL.revokeObjectURL(image);
-			    	input.onChange(image);
-			    }
-			    preview.src = image_asURL;
-			    preview.height = 75;
-            }
-            else
-                input.onChange(null);
+        event.preventDefault();
+        const image = event.target.files[0];
+        console.log(input);
+        if(image) {
+            console.log(image);
+            const preview = document.getElementById("preview");
+			const image_asURL = window.URL.createObjectURL(image);
+			preview.onload = function() {
+			    URL.revokeObjectURL(image);
+			    input.onChange(image);
+			}
+			preview.src = image_asURL;
+			preview.height = 75;
         }
+        else
+            input.onChange(null);
     };
 
     validateURL = url => {
@@ -45,19 +43,10 @@ class Myform extends Component {
                 return 'URL should contain an image';
             else {
             	const preview = document.getElementById("preview");
-            	//preview.onload = function() {
-            	//	preview.src = img.src;
-            	//}
+            	preview.onload = function() {
+            		}
             	preview.src = url;
             	preview.height = 75;
-            	/*
-            	const img = document.createElement("img");
-			    img.src = window.URL.createObjectURL(url);
-			    img.height = 60;
-			    img.onload = function() {
-			    	window.URL.revokeObjectURL(this.src);
-      			}
-      			*/
       			return 'Correct!'
 
             }
@@ -67,8 +56,8 @@ class Myform extends Component {
 
     uploadrenderField = ({label, type, input, meta: { invalid, error } }) => (
             <div>
-            	<label> {label} </label>
-            	<input name = {input.name} type={type} accept = '.jpeg, .png'
+            	<label className="textarea"> {label} </label>
+            	<input className="textarea" name = {input.name} type={type} accept = '.jpeg, .png'
             			onChange={event => this.onChangeUpload(event,input)}/>
             	{invalid && error &&
             			<span className="error">{error}</span>}
@@ -77,8 +66,8 @@ class Myform extends Component {
 
     urlrenderField = ({label, type, input: { name, onBlur }, meta: { invalid, error } }) => (
             <div>
-            	<label> {label} </label>
-          		<input name = {name} type={type}
+            	<label className="textarea"> {label} </label>
+          		<input className="textarea" name = {name} type={type}
             			onBlur={event => onBlur(event)} />
             	{invalid && error &&
             			<span className="error">{error}</span>}
@@ -89,12 +78,16 @@ class Myform extends Component {
         const {handleSubmit} = this.props;
         return (
                 <div className="form">
-                	<h3> Here is a Form </h3>
                 	<form onSubmit={handleSubmit(this.submit)}>
-                		<Field name="url" label="Enter the url for the Image " validate = {this.validateURL} component={this.urlrenderField} type="text"/>
-                		<Field name="upload" label="Upload the Image " type="file" validate = {this.validateSize} component={this.uploadrenderField} />
-                		<button type="submit"> Submit </button>
-                		<img id="preview" />
+                		<Field  name="url" label="Enter the url for the Image " validate = {this.validateURL} component={this.urlrenderField} type="text"/>
+                		<Field  name="upload" label="Upload the Image " type="file" validate = {this.validateSize} component={this.uploadrenderField} />
+                		<button type="submit" className="textarea"> Submit </button>
+                		<div className="ImagePreview">
+                		<p className="textarea" style={{textalign: "center"}}> Image preview here!</p>
+                		<img id="preview" alt="preview" src="http://www.bondsloans.com/Content/Cms/news/9b985fa1-d7f8-4319-809a-5bfad28a2545.jpg" 
+                			className="ImagePreview"
+						/>
+						</div>
                 	</form>
                 </div>
                );
