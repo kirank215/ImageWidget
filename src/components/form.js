@@ -6,30 +6,49 @@ import '../css/App.css'
 
 class Myform extends Component {
 
-    submit = values => {
-        /* 	if(!url.trim() && !image) {
-            console.log(url);
-            console.log(image);
-            }
-            else
-            return 'Enter one field!'
-         */
-        console.log(values);
+	tobase64 = (file) => new Promise((resolve, reject) => {
+		const reader = new FileReader();
+		reader.onload = () => resolve(reader.result);
+		reader.onabort = () => console.log("file reading was aborted");
+        reader.onerror = () => console.log("file reading has failed");
+		reader.readAsDataURL(file);
+	});
+
+    submit = async({url,upload}) => {					// async as converting to base64 is not immediate
+        if(!url && !upload) {
+        	console.log('Enter a field');
+        }
+        let file_base64: any;
+
+        if(upload){
+        	file_base64 = await this.tobase64(upload);		// 'await' as the promise takes time to resolve
+        }
+        else if(url){
+        	const blob = await fetch(url).then(r => r.blob());		// converts url to blob
+        				// as readAsDataURL accepts only blob/file
+        	file_base64 = await this.tobase64(blob);
+        }
+        console.log(file_base64);
+
+
     };
 
-    onChangeUpload = (event,input) => {
+    onChangeUpload = async (event,input) => {
         event.preventDefault();
         const image = event.target.files[0];
-        console.log(input);
+  //      console.log(image);
         if(image) {
-            console.log(image);
             const preview = document.getElementById("preview");
 			const image_asURL = window.URL.createObjectURL(image);
-			preview.onload = function() {
+			preview.onload = () => {
 			    URL.revokeObjectURL(image);
 			    input.onChange(image);
 			}
 			preview.src = image_asURL;
+		//	input = image_asURL;
+		//	const file_base64 = await this.prom(image);
+			console.log(image);
+	//		console.log(file_base64);
         }
         else
             input.onChange(null);
@@ -41,7 +60,7 @@ class Myform extends Component {
     	if(invalid === false) {
     		const url = event.target.value;
     		const preview = document.getElementById("preview");
-            preview.onload = function() {
+            preview.onload = () => {
             	}
             preview.src = url;
             preview.height = 75;
@@ -83,13 +102,15 @@ class Myform extends Component {
         return (
                 <div className="form">
                 	<form onSubmit={handleSubmit(this.submit)}>
-                		<Field  name="url" label="Enter the url for the Image " validate={this.validateURL} component={this.urlrenderField} type="text"/>
-                		<Field  name="upload" label="Upload the Image " type="file" validate = {this.validateSize} component={this.uploadrenderField} />
+                		<Field name="url" label="Enter the url for the Image " 
+                				validate={this.validateURL} component={this.urlrenderField} type="text"/>
+                		<Field  name="upload" label="Upload the Image " type="file" 
+                				validate = {this.validateSize} component={this.uploadrenderField} />
                 		<button type="submit" className="textarea"> Submit </button>
                 		<div className="ImagePreview">
                 		<p className="textarea" style={{textalign: "center"}}> Image preview here!</p>
-                		<img id="preview" alt="preview" src="http://www.bondsloans.com/Content/Cms/news/9b985fa1-d7f8-4319-809a-5bfad28a2545.jpg" 
-                			className="ImagePreview"
+                		<img id="preview" alt="preview" 
+                				src="http://www.bondsloans.com/Content/Cms/news/9b985fa1-d7f8-4319-809a-5bfad28a2545.jpg" className="ImagePreview"
 						/>
 						</div>
                 	</form>
