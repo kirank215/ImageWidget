@@ -1,12 +1,12 @@
 import React from 'react';
 import {Component} from 'react';
-import { Field, reduxForm } from 'redux-form';
+import { Field, reduxForm,SubmissionError } from 'redux-form';
 import '../css/App.css'
 
 
 class Myform extends Component {
 
-	tobase64 = (file) => new Promise((resolve, reject) => {
+	tobase64 = (file) => new Promise((resolve) => {
 		const reader = new FileReader();
 		reader.onload = () => resolve(reader.result);
 		reader.onabort = () => console.log("file reading was aborted");
@@ -17,11 +17,17 @@ class Myform extends Component {
     submit = async({url,upload}) => {					// async as converting to base64 is not immediate
         if(!url && !upload) {
         	console.log('Enter a field');
+        	throw new SubmissionError({
+        		upload: 'Enter one of the fields!',
+        		url: 'Enter one of the fields!',
+        		_error: 'No entry!'
+      		})   	
         }
+        console.log(upload);
         let file_base64: any;
 
         if(upload){
-        	file_base64 = await this.tobase64(upload);		// 'await' as the promise takes time to resolve
+        	file_base64 = await this.tobase64(upload);		// 'await' as the promise in tobase64 takes time to resolve
         }
         else if(url){
         	const blob = await fetch(url).then(r => r.blob());		// converts url to blob
@@ -33,10 +39,13 @@ class Myform extends Component {
 
     };
 
+    reset = (event) => {
+    	const preview = document.getElementById("preview");
+    	preview.src= '';
+    }
     onChangeUpload = async (event,input) => {
         event.preventDefault();
         const image = event.target.files[0];
-  //      console.log(image);
         if(image) {
             const preview = document.getElementById("preview");
 			const image_asURL = window.URL.createObjectURL(image);
@@ -45,10 +54,10 @@ class Myform extends Component {
 			    input.onChange(image);
 			}
 			preview.src = image_asURL;
-		//	input = image_asURL;
-		//	const file_base64 = await this.prom(image);
-			console.log(image);
-	//		console.log(file_base64);
+
+			console.log(event.target);
+			console.log(event.target.value);
+			event.target.value = null;   			// helps on uploading same file twice after clear
         }
         else
             input.onChange(null);
@@ -64,6 +73,7 @@ class Myform extends Component {
             	}
             preview.src = url;
             preview.height = 75;
+
     	}
     }
 
@@ -98,20 +108,23 @@ class Myform extends Component {
             );
 
     render() {
-        const {handleSubmit} = this.props;
+        const {handleSubmit, reset, submitting} = this.props;
         return (
                 <div className="form">
                 	<form onSubmit={handleSubmit(this.submit)}>
                 		<Field name="url" label="Enter the url for the Image " 
                 				validate={this.validateURL} component={this.urlrenderField} type="text"/>
-                		<Field  name="upload" label="Upload the Image " type="file" 
+                		<Field  name="upload" label="Upload the Image " type="file"
                 				validate = {this.validateSize} component={this.uploadrenderField} />
                 		<button type="submit" className="textarea"> Submit </button>
+                		<button type="button" name="valueclear" onClick={reset} disabled={submitting}> 
+                					Clear Values </button>
+
                 		<div className="ImagePreview">
-                		<p className="textarea" style={{textalign: "center"}}> Image preview here!</p>
-                		<img id="preview" alt="preview" 
-                				src="http://www.bondsloans.com/Content/Cms/news/9b985fa1-d7f8-4319-809a-5bfad28a2545.jpg" className="ImagePreview"
-						/>
+                		<p className="textarea" style={{textalign: "center"}}> Image preview!</p>
+						<img id="preview" alt="preview" className="ImagePreview"/>
+						<button type="button" name="previewclear" onClick={this.reset} disabled={submitting}> 
+                					Clear Preview </button>
 						</div>
                 	</form>
                 </div>

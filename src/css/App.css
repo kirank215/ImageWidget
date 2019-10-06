@@ -31,9 +31,21 @@
 }
 
 .textarea {
-  width: 70%;
+  width: 60%;
+  font-size: 20px;
   padding: 5px 5px;
   margin: 15px 15px 10px 10px;
   box-sizing: border-box;
+}
+
+.error{
+	color: #D8000C;
+	background-color: #FFBABA;
+	font-size: 13px;
+}
+
+input[type="file"]{
+width:90px; 
+color: transparent;
 }
 

@@ -1,6 +1,8 @@
 -create new function for component of url   (x)
 -check if url is image                      (x)
--validate image extensions                  
+-validate image extensions                  (x)
 -add preview                                (x)
--add and style preview box
--convert to base64 when submitting
+-add and style preview box                  (x)
+-convert to base64 when submitting          (x)
+- Check inputs to have them on at a time
+- Add reset button
