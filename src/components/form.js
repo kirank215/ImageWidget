@@ -30,26 +30,30 @@ class Myform extends Component {
 			    input.onChange(image);
 			}
 			preview.src = image_asURL;
-			preview.height = 75;
         }
         else
             input.onChange(null);
     };
 
+
+    onBlurURL = (event,input,invalid) => {
+    	event.preventDefault();
+    	if(invalid === false) {
+    		const url = event.target.value;
+    		const preview = document.getElementById("preview");
+            preview.onload = function() {
+            	}
+            preview.src = url;
+            preview.height = 75;
+    	}
+    }
+
     validateURL = url => {
         if(url) {
-            console.log(url);
             if(url.match(/([a-z-_0-9/:.]*\.(jpg|jpeg|png))/i) == null)
                 return 'URL should contain an image';
-            else {
-            	const preview = document.getElementById("preview");
-            	preview.onload = function() {
-            		}
-            	preview.src = url;
-            	preview.height = 75;
-      			return 'Correct!'
-
-            }
+            else
+      			return undefined;
         }
     }
 
@@ -64,11 +68,11 @@ class Myform extends Component {
             </div>
             );
 
-    urlrenderField = ({label, type, input: { name, onBlur }, meta: { invalid, error } }) => (
+    urlrenderField = ({label, type, input , meta: { invalid, error } }) => (
             <div>
             	<label className="textarea"> {label} </label>
-          		<input className="textarea" name = {name} type={type}
-            			onBlur={event => onBlur(event)} />
+          		<input {... input} className="textarea" name = {input.name} type={type}
+            			onBlur={event => this.onBlurURL(event,input,invalid)} />
             	{invalid && error &&
             			<span className="error">{error}</span>}
             </div>
@@ -79,7 +83,7 @@ class Myform extends Component {
         return (
                 <div className="form">
                 	<form onSubmit={handleSubmit(this.submit)}>
-                		<Field  name="url" label="Enter the url for the Image " validate = {this.validateURL} component={this.urlrenderField} type="text"/>
+                		<Field  name="url" label="Enter the url for the Image " validate={this.validateURL} component={this.urlrenderField} type="text"/>
                 		<Field  name="upload" label="Upload the Image " type="file" validate = {this.validateSize} component={this.uploadrenderField} />
                 		<button type="submit" className="textarea"> Submit </button>
                 		<div className="ImagePreview">

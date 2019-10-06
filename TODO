@@ -1,5 +1,6 @@
--create new function for component of url
--check if url is image
--validate image extensions
--add preview
+-create new function for component of url   (x)
+-check if url is image                      (x)
+-validate image extensions                  
+-add preview                                (x)
+-add and style preview box
 -convert to base64 when submitting
