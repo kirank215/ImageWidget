@@ -1,7 +1,10 @@
 import React from 'react';
 import {Component} from 'react';
-import { Field, reduxForm,SubmissionError } from 'redux-form';
+import { connect } from 'react-redux'
+import { Field, reduxForm,SubmissionError,formValueSelector } from 'redux-form';
+import {resetPreview, validateURL} from './validate'
 import '../css/App.css'
+
 
 
 class Myform extends Component {
@@ -21,12 +24,11 @@ class Myform extends Component {
         		upload: 'Enter one of the fields!',
         		url: 'Enter one of the fields!',
         		_error: 'No entry!'
-      		})   	
+      		})
         }
-        console.log(upload);
-        let file_base64: any;
 
-        if(upload){
+        let file_base64: any;
+		if(upload){
         	file_base64 = await this.tobase64(upload);		// 'await' as the promise in tobase64 takes time to resolve
         }
         else if(url){
@@ -35,14 +37,8 @@ class Myform extends Component {
         	file_base64 = await this.tobase64(blob);
         }
         console.log(file_base64);
-
-
     };
-
-    reset = (event) => {
-    	const preview = document.getElementById("preview");
-    	preview.src= '';
-    }
+ 
     onChangeUpload = async (event,input) => {
         event.preventDefault();
         const image = event.target.files[0];
@@ -54,40 +50,26 @@ class Myform extends Component {
 			    input.onChange(image);
 			}
 			preview.src = image_asURL;
-
-			console.log(event.target);
-			console.log(event.target.value);
-			event.target.value = null;   			// helps on uploading same file twice after clear
+			event.target.value = null;   			// helps on uploading same file twice after reset
         }
         else
             input.onChange(null);
     };
-
 
     onBlurURL = (event,input,invalid) => {
     	event.preventDefault();
     	if(invalid === false) {
     		const url = event.target.value;
     		const preview = document.getElementById("preview");
-            preview.onload = () => {
-            	}
+          //  preview.onload = () => {
+         //   	}
             preview.src = url;
             preview.height = 75;
 
     	}
     }
-
-    validateURL = url => {
-        if(url) {
-            if(url.match(/([a-z-_0-9/:.]*\.(jpg|jpeg|png))/i) == null)
-                return 'URL should contain an image';
-            else
-      			return undefined;
-        }
-    }
-
-
-    uploadrenderField = ({label, type, input, meta: { invalid, error } }) => (
+    
+    uploadrenderField = ({hasURL, label, type, input, meta: { invalid, error } }) => (
             <div>
             	<label className="textarea"> {label} </label>
             	<input className="textarea" name = {input.name} type={type} accept = '.jpeg, .png'
@@ -104,26 +86,27 @@ class Myform extends Component {
             			onBlur={event => this.onBlurURL(event,input,invalid)} />
             	{invalid && error &&
             			<span className="error">{error}</span>}
+
             </div>
             );
 
     render() {
-        const {handleSubmit, reset, submitting} = this.props;
+        const {handleSubmit, reset, submitting,hasURL, hasUpload} = this.props;
         return (
                 <div className="form">
                 	<form onSubmit={handleSubmit(this.submit)}>
-                		<Field name="url" label="Enter the url for the Image " 
-                				validate={this.validateURL} component={this.urlrenderField} type="text"/>
-                		<Field  name="upload" label="Upload the Image " type="file"
-                				validate = {this.validateSize} component={this.uploadrenderField} />
+                		{!hasUpload && (<Field name="url" label="Enter the url for the Image " 
+                				validate={validateURL} component={this.urlrenderField} type="text"/>)}
+                		{!hasURL && (<Field  name="upload" label="Upload the Image " type="file"
+                				 component={this.uploadrenderField} />)}
                 		<button type="submit" className="textarea"> Submit </button>
                 		<button type="button" name="valueclear" onClick={reset} disabled={submitting}> 
                 					Clear Values </button>
 
                 		<div className="ImagePreview">
                 		<p className="textarea" style={{textalign: "center"}}> Image preview!</p>
-						<img id="preview" alt="preview" className="ImagePreview"/>
-						<button type="button" name="previewclear" onClick={this.reset} disabled={submitting}> 
+						<img id="preview" alt="No preview available" className="ImagePreview"/>
+						<button type="button" name="previewclear" onClick={resetPreview} disabled={submitting}> 
                 					Clear Preview </button>
 						</div>
                 	</form>
@@ -133,6 +116,18 @@ class Myform extends Component {
 }
 Myform = reduxForm({
 form: 'myform'
+})(Myform);
+
+const selector = formValueSelector('myform') // <-- same as form name
+Myform = connect(state => {
+  // can select values individually
+  const hasURL = selector(state, 'url')
+  const hasUpload = selector(state, 'upload')
+
+  return {
+   hasURL,
+   hasUpload
+  }
 })(Myform);
 
 
