@@ -74,7 +74,7 @@ class Myform extends Component {
     uploadrenderField = ({hasURL, label, type, input, meta: { invalid, error } }) => (
             <div>
             	<label className="textarea"> {label} </label>
-            	<input className="textarea" name = {input.name} type={type} accept = '.jpeg, .png'
+            	<input className="textarea" name = {input.name} type={type} accept = '.jpeg, .png, .jpg, .gif'
             			onChange={event => this.onChangeUpload(event,input)}/>
             	{invalid && error &&
             			<span className="error">{error}</span>}
