@@ -12,6 +12,10 @@ A simple form that takes an uploaded image or image through url and provides a p
 
 git clone https://github.com/kirank215/ImageWidget.git 
 
+cd ImageWidget
+
+npm install 
+
 npm run build
 
 npm install -g serve
