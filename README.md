@@ -10,16 +10,16 @@ A simple form that takes an uploaded image or image through url and provides a p
 
 ## Installation
 
-###git clone https://github.com/kirank215/ImageWidget.git 
+### git clone https://github.com/kirank215/ImageWidget.git 
 
-###cd ImageWidget
+### cd ImageWidget
 
-###npm install 
+### npm install 
 
-###npm run build
+### npm run build
 
-###npm install -g serve
+### npm install -g serve
 
-###serve -s build
+### serve -s build
 
 See the section about [deployment](https://facebook.github.io/create-react-app/docs/deployment) for more information.
