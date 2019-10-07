@@ -4,5 +4,5 @@
 -add preview                                (x)
 -add and style preview box                  (x)
 -convert to base64 when submitting          (x)
-- Check inputs to have them on at a time
-- Add reset button
+- Check inputs to have them on at a time    (x)
+- Add reset button                          (x)
